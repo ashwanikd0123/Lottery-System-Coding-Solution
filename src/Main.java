@@ -1,15 +1,37 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import lotterysystem.Candidate;
+import lotterysystem.LotterySystem;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+import javax.naming.directory.InvalidAttributesException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Main {
+
+    public static void main(String[] args) throws InvalidAttributesException {
+        LotterySystem system = new LotterySystem();
+
+        system.addCandidate("Alice", 15);   // 15% chance approx
+        system.addCandidate("Bob", 20);     // 20%
+        system.addCandidate("Charlie", 60); // 60%
+        system.addCandidate("Lada", 2);  // 5%
+
+        int iterations = 100000;
+        Map<String, Integer> winStats = new HashMap<>();
+
+        for (Candidate c : system.getCandidates()) {
+            winStats.put(c.name, 0);
+        }
+
+        for (int i = 0; i < iterations; i++) {
+            system.makeWinner();
+            Candidate winner = system.getWinner();
+            winStats.put(winner.name, winStats.get(winner.name) + 1);
+        }
+
+        System.out.println("Lottery Results after " + iterations + " runs:");
+        for (Map.Entry<String, Integer> entry : winStats.entrySet()) {
+            double percentage = (entry.getValue() * 100.0) / iterations;
+            System.out.printf("%s won %d times (%.2f%%)\n", entry.getKey(), entry.getValue(), percentage);
         }
     }
 }
